@@ -1,0 +1,21 @@
+name: AleArena
+version: '${version}'
+main: de.roni.alearena.AleArenaPlugin
+api-version: '26.3'
+author: Roni
+description: Streams und Webseiten zusammen ingame schauen – Leinwand aus Karten, Ton über Simple Voice Chat
+softdepend: [voicechat]
+commands:
+  arena:
+    description: AleArena – Leinwände und Streams
+    usage: /arena help
+    aliases: [alearena, tv]
+permissions:
+  alearena.admin:
+    description: Leinwände bauen, Streams starten/stoppen
+    default: op
+    children:
+      alearena.control: true
+  alearena.control:
+    description: Auf der Leinwand klicken, tippen, scrollen
+    default: true

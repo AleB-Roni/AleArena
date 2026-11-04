@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AleArena Ton</title>
+<style>
+  :root { --bg:#0f1a12; --card:#16251a; --line:#2a4231; --fg:#e8f3ea; --dim:#8fa996; --accent:#4cd964; }
+  * { box-sizing:border-box; }
+  body { margin:0; min-height:100vh; background:var(--bg); color:var(--fg);
+         font:16px/1.5 system-ui, -apple-system, Segoe UI, sans-serif; display:flex; justify-content:center; }
+  main { width:100%; max-width:520px; padding:32px 16px; }
+  h1 { margin:0 0 4px; font-size:28px; letter-spacing:-.5px; }
+  h1 span { color:var(--accent); }
+  p.sub { margin:0 0 24px; color:var(--dim); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:12px;
+          display:flex; align-items:center; gap:14px; }
+  .card.active { border-color:var(--accent); }
+  .info { flex:1; min-width:0; }
+  .name { font-weight:600; }
+  .src { color:var(--dim); font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  button { background:var(--accent); color:#06210d; border:0; border-radius:10px; padding:10px 16px; font-weight:700; cursor:pointer; }
+  button.off { background:transparent; color:var(--fg); border:1px solid var(--line); }
+  input[type=range] { width:100%; accent-color:var(--accent); margin-top:8px; }
+  .empty { color:var(--dim); text-align:center; padding:32px 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>⚽ Ale<span>Arena</span></h1>
+  <p class="sub">Ton zur Leinwand – einfach auf Abspielen tippen.</p>
+  <div id="list"><div class="empty">Lade …</div></div>
+  <label class="sub" for="vol">Lautstärke</label>
+  <input id="vol" type="range" min="0" max="1" step="0.05" value="0.8">
+</main>
+<audio id="a" preload="none"></audio>
+<script>
+  const a = document.getElementById('a'), list = document.getElementById('list'), vol = document.getElementById('vol');
+  let current = null;
+  vol.oninput = () => a.volume = vol.value; a.volume = vol.value;
+  function toggle(name) {
+    if (current === name) { a.pause(); a.removeAttribute('src'); a.load(); current = null; }
+    else { a.src = '/audio/' + encodeURIComponent(name) + '.mp3?t=' + Date.now(); a.play(); current = name; }
+    render(window._last || []);
+  }
+  function render(items) {
+    window._last = items;
+    const live = items.filter(s => s.audio);
+    if (!live.length) { list.innerHTML = '<div class="empty">Gerade läuft nichts mit Ton.</div>'; return; }
+    list.innerHTML = '';
+    for (const s of live) {
+      const c = document.createElement('div'); c.className = 'card' + (current === s.name ? ' active' : '');
+      const i = document.createElement('div'); i.className = 'info';
+      i.innerHTML = '<div class="name"></div><div class="src"></div>';
+      i.children[0].textContent = s.name; i.children[1].textContent = s.source;
+      const b = document.createElement('button'); b.textContent = current === s.name ? 'Stopp' : 'Abspielen';
+      if (current === s.name) b.className = 'off';
+      b.onclick = () => toggle(s.name);
+      c.append(i, b); list.append(c);
+    }
+  }
+  async function poll() {
+    try { render(await (await fetch('/api/screens')).json()); } catch (e) {}
+  }
+  poll(); setInterval(poll, 5000);
+  const hash = decodeURIComponent(location.hash.slice(1));
+  if (hash) document.addEventListener('click', () => { if (!current) toggle(hash); }, { once: true });
+</script>
+</body>
+</html>

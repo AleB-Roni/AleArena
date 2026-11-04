@@ -1,0 +1,54 @@
+# ─────────────────────────────  AleArena  ─────────────────────────────
+
+# Bilder pro Sekunde auf der Leinwand (1–20). Mehr = flüssiger, aber mehr Bandbreite.
+# Grob pro Spieler: Breite × Höhe × fps × ~8 KB/s (nach Kompression).
+fps: 10
+
+# Verläufe glätten (Rasen, Himmel) – meist schöner, kostet kaum CPU.
+dithering: true
+
+# Bis zu welcher Entfernung (Blöcke) Spieler das Bild bekommen.
+view-distance: 96
+
+# Maximalgröße einer Leinwand (in Karten/Blöcken).
+max-width: 12
+max-height: 8
+
+# Bild absichtlich verzögern, falls der Ton hinterherhängt (Millisekunden).
+video-delay-ms: 0
+
+ffmpeg-path: ffmpeg
+
+# Für /arena play mit YouTube-/Twitch-Links
+ytdlp-path: yt-dlp
+ytdlp-format: "best[height<=720]/bv*[height<=720]+ba/best"
+
+# /arena web – unsichtbarer Browser auf dem Server
+browser:
+  chrome-path: google-chrome
+  xvfb-path: Xvfb
+  pulseaudio-path: pulseaudio
+  pactl-path: pactl
+  # Ton der Webseite mitschneiden
+  audio: true
+  # Höhe des Browserfensters in Pixeln; die Breite passt sich der Leinwand an
+  height: 720
+  # Erste X-Display-Nummer, die AleArena benutzt
+  display-start: 90
+
+# Ton ingame über Simple Voice Chat (Plugin auf dem Server + Mod bei den Spielern)
+voicechat:
+  enabled: true
+  # Bis zu dieser Entfernung hört man die Leinwand (leiser mit Abstand)
+  distance: 48
+
+# Optional: Ton zusätzlich im Browser für Leute ohne Voice-Chat-Mod
+web-audio:
+  enabled: false
+  port: 8765
+  public-url: "http://DEINE-SERVER-IP:8765"
+
+# /arena obs – OBS streamt an rtmp://<server-ip>:<port>/live mit diesem Key
+rtmp:
+  port: 1935
+  key: alearena

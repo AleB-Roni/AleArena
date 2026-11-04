@@ -1,0 +1,22 @@
+services:
+  minecraft:
+    build: .
+    image: alearena-minecraft:latest
+    container_name: minecraft-alearena
+    restart: unless-stopped
+    environment:
+      EULA: "TRUE"
+      TYPE: PAPER
+      VERSION: "26.3"
+      MEMORY: "6G"
+      # Simple Voice Chat (Server-Plugin) automatisch laden
+      MODRINTH_PROJECTS: |
+        simple-voice-chat
+    ports:
+      - "25565:25565"        # Minecraft
+      - "24454:24454/udp"    # Simple Voice Chat
+      - "1935:1935"          # nur für /arena obs
+      # - "8765:8765"        # nur wenn web-audio.enabled: true
+    shm_size: "1gb"          # Chrome braucht Shared Memory
+    volumes:
+      - /mnt/user/appdata/minecraft-alearena:/data
